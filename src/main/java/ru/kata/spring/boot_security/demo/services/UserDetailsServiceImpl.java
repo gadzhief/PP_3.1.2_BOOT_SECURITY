@@ -10,6 +10,7 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -26,6 +27,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userRepository.findAll();
     }
     public User getUserById(Long id) {return userRepository.findById(id).orElse(null);}
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     @Transactional
     public void saveUser(User user) {
          userRepository.save(user);

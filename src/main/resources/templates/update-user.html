@@ -23,24 +23,10 @@
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required><br><br>
 
-<!--    <label for="role">Role:</label>-->
-<!--    <select id="role" name="role" required>-->
-<!--        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>-->
-<!--    </select><br><br>-->
-    <label for="role1">Role 1:</label>
-    <select id="role1" name="role1">
-        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>
+    <label for="roleNames">Role:</label>
+    <select id="roleNames" name="roleNames" multiple>
+        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
     </select>
-
-    <label for="role2">Role 2:</label>
-    <select id="role2" name="role2">
-        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>
-    </select>
-<!--    <label>Roles:</label>-->
-<!--    <div th:each="role : ${roles}">-->
-<!--        <input type="checkbox" th:field="*{roles}" th:value="${role.name}" th:text="${role.name}" />-->
-<!--    </div>-->
-
 
 
 

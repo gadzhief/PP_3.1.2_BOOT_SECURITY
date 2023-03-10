@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,6 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -18,11 +18,14 @@ public class AdminController {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminController(UserDetailsServiceImpl userDetailsService, RoleRepository roleRepository) {
+    public AdminController(UserDetailsServiceImpl userDetailsService, RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping()
@@ -31,77 +34,26 @@ public class AdminController {
         model.addAttribute("users", users);
         return "admin";
     }
+
     @GetMapping("/create")
     public String createUserForm(Model model) {
         model.addAttribute("users", new User());
         model.addAttribute("roles", roleRepository.findAll());
         return "create";
     }
-//    @PostMapping("/create")
-//    public String adminCreateEndpoint(@ModelAttribute User user, @RequestParam("roles[]") List<String> roles) {
-//        Set<Role> userRoles = new HashSet<>();
-//        for (String roleName : roles) {
-//            Optional<Role> roleOptional = roleRepository.findByName(roleName);
-//            if (roleOptional.isPresent()) {
-//                userRoles.add(roleOptional.get());
-//            }
-//        }
-//        user.setRoles(userRoles);
-//
-//        userDetailsService.saveUser(user);
-//        return "redirect:/admin";
-//    }
-//    @PostMapping("/create")
-//    public String adminCreateEndpoint(@ModelAttribute User user) {
-//        Set<Role> userRoles = user.getRoles().stream()
-//                .map(roleName -> roleRepository.findByName(roleName.getName()).orElse(null))
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toSet());
-//        user.setRoles(userRoles);
-//
-//        userDetailsService.saveUser(user);
-//        return "redirect:/admin";
-//    }
-//    @PostMapping("/create")
-//    public String adminCreateEndpoint(@ModelAttribute User user, @RequestParam(name = "roleNames", required = false) List<String> roleNames) {
-//        if (roleNames == null) {
-//            roleNames = Collections.emptyList();
-//        }
-//        Set<Role> userRoles = roleNames.stream()
-//                .map(roleName -> roleRepository.findByName(roleName).orElse(null))
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toSet());
-//        user.setRoles(userRoles);
-//
-//        userDetailsService.saveUser(user);
-//        return "redirect:/admin";
-//    }
-//@PostMapping("/create")
-//public String adminCreateEndpoint(@ModelAttribute User user, @RequestParam("roleNames") List<String> roleNames) {
-//    Set<Role> roles = roleRepository.findByName(roleNames);
-//    user.setRoles(roles);
-//
-//    userDetailsService.saveUser(user);
-//    return "redirect:/admin";
-//}
-@PostMapping("/create")
-public String adminCreateEndpoint(@ModelAttribute User user,
-                                  @RequestParam(value = "role1", required = false) String role1Name,
-                                  @RequestParam(value = "role2", required = false) String role2Name) {
-    Set<Role> roles = new HashSet<>();
-    if (role1Name != null) {
-        Role role1 = roleRepository.findByName(role1Name).get();
-        roles.add(role1);
-    }
-    if (role2Name != null) {
-        Role role2 = roleRepository.findByName(role2Name).get();
-        roles.add(role2);
-    }
-    user.setRoles(roles);
-    userDetailsService.saveUser(user);
-    return "redirect:/admin";
-}
 
+    @PostMapping("/create")
+    public String adminCreateEndpoint(@ModelAttribute User user, @RequestParam(name = "roleNames", required = false) List<String> roleNames) {
+
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        Set<Role> userRoles = roleRepository.findByNameIn(roleNames);
+        user.setRoles(userRoles);
+
+        userDetailsService.saveUser(user);
+        return "redirect:/admin";
+    }
 
     @PostMapping("delete/{id}")
     public String delete(@PathVariable("id") Long id) {
@@ -120,22 +72,15 @@ public String adminCreateEndpoint(@ModelAttribute User user,
     @PostMapping("/edit/{id}")
     public String update(@PathVariable("id") Long id,
                          @ModelAttribute("user") User user,
-                         @RequestParam(value = "role1", required = false) String role1Name,
-                         @RequestParam(value = "role2", required = false) String role2Name) {
-        Set<Role> roles = new HashSet<>();
-        if (role1Name != null) {
-            Role role1 = roleRepository.findByName(role1Name).get();
-            roles.add(role1);
-        }
-        if (role2Name != null) {
-            Role role2 = roleRepository.findByName(role2Name).get();
-            roles.add(role2);
-        }
-        user.setRoles(roles);
+                         @RequestParam(name = "roleNames", required = false) List<String> roleNames) {
+
+        Set<Role> userRoles = roleRepository.findByNameIn(roleNames);
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        user.setRoles(userRoles);
         userDetailsService.saveUser(user);
         return "redirect:/admin";
     }
-
-
 
 }

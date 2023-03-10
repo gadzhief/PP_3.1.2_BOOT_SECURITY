@@ -5,3 +5,6 @@ VALUES ('John', 'Doe', 'johndoe@example.com', 'password1', 30),
 
 INSERT INTO users_roles (user_id, role_id)
 VALUES (1, 1), (2, 1), (3, 2);
+
+INSERT INTO test_db.roles (name) VALUES ('ROLE_ADMIN');
+INSERT INTO test_db.roles (name) VALUES ('ROLE_USER');

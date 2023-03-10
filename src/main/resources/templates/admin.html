@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+</head>
+<body>
+<h2>User List</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Age</th>
+        <th>Roles</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.firstName}"></td>
+        <td th:text="${user.lastName}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.age}"></td>
+        <td>
+            <div th:each="role : ${user.roles}">
+                <span th:text="${role.name}"></span>
+            </div>
+        <td>
+            <div class="actions">
+                <a th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</a>
+                <form th:action="@{/admin/delete/{id}(id=${user.id})}" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:href="@{/admin/create}">Add User</a>
+<p></p>
+
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" name="_method" value="POST">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>

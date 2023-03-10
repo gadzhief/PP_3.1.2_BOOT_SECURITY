@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit user</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles2.css}">
+</head>
+<body>
+<h2>Edit User</h2>
+<form th:action="@{/admin/edit/{id}(id=${user.id})}" method="post">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstName" required><br><br>
+
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="lastName" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="age">Age:</label>
+    <input type="age" id="age" name="age" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+<!--    <label for="role">Role:</label>-->
+<!--    <select id="role" name="role" required>-->
+<!--        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>-->
+<!--    </select><br><br>-->
+    <label for="role1">Role 1:</label>
+    <select id="role1" name="role1">
+        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>
+    </select>
+
+    <label for="role2">Role 2:</label>
+    <select id="role2" name="role2">
+        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>
+    </select>
+<!--    <label>Roles:</label>-->
+<!--    <div th:each="role : ${roles}">-->
+<!--        <input type="checkbox" th:field="*{roles}" th:value="${role.name}" th:text="${role.name}" />-->
+<!--    </div>-->
+
+
+
+
+    <input type="submit" value="Save User">
+</form>
+<br>
+<a th:href="@{/admin}">Back to users</a>
+</body>
+</html>
